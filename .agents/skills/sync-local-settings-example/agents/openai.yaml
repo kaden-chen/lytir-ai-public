@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sync local settings example"
+  short_description: "Sanitize local setting keys into an example"
+  default_prompt: "Use $sync-local-settings-example to safely synchronize local setting keys into the tracked example file."

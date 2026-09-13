@@ -1,0 +1,61 @@
+name: PR - Code quality
+
+on:
+  # During R&D, feature work is validated before entering dev. Add main when
+  # main has its own deployment path or requires an independent release gate.
+  pull_request:
+    branches:
+      - dev
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Python quality checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements-dev.txt
+
+      - name: Verify dependency lock files
+        run: |
+          CUSTOM_COMPILE_COMMAND="python -m piptools compile --allow-unsafe --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file=requirements.txt requirements.in" \
+            python -m piptools compile --quiet --allow-unsafe --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file=requirements.txt requirements.in
+          CUSTOM_COMPILE_COMMAND="python -m piptools compile --allow-unsafe --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file=requirements-dev.txt requirements-dev.in" \
+            python -m piptools compile --quiet --allow-unsafe --strip-extras --no-emit-index-url --no-emit-trusted-host --output-file=requirements-dev.txt requirements-dev.in
+          git diff --exit-code -- requirements.txt requirements-dev.txt
+
+      - name: Check formatting
+        run: python -m ruff format --check .
+
+      - name: Lint
+        run: python -m ruff check .
+
+      - name: Type check
+        run: python -m mypy
+
+      - name: Run tests
+        run: python -m pytest
+
+      - name: Compile application
+        run: python -m compileall -q function_app.py
+
+      - name: Import application
+        run: python -c "import function_app"

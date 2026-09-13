@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "general-capital",
+      "question": "What is the capital of Japan?",
+      "expected_answer": "The answer identifies Tokyo as the capital of Japan.",
+      "expected_skills": ["general"],
+      "expected_outcomes": ["answered"],
+      "retrieval": "none",
+      "answer_term_groups": [["tokyo"]],
+      "semantic_check": "none"
+    },
+    {
+      "id": "lytir-information",
+      "question": "What does Lytir do, and what earthquake filters does it support?",
+      "expected_answer": "The answer explains that Lytir works with earthquake observations and supports time, location or radius, and magnitude filters.",
+      "expected_skills": ["lytir_info"],
+      "expected_outcomes": ["answered"],
+      "retrieval": "none",
+      "answer_term_groups": [
+        ["earthquake"],
+        ["time"],
+        ["location", "radius", "geographic"],
+        ["magnitude"]
+      ],
+      "semantic_check": "none"
+    },
+    {
+      "id": "worldwide-last-hour-count",
+      "question": "How many earthquakes did Lytir observe worldwide in the last hour?",
+      "expected_answer": "The reported number of earthquakes agrees with an independent replay of the model-selected time filter.",
+      "expected_skills": ["lytir_data"],
+      "expected_outcomes": ["answered"],
+      "retrieval": "required",
+      "answer_term_groups": [],
+      "semantic_check": "retrieval_count"
+    },
+    {
+      "id": "dallas-last-hour",
+      "question": "In the last hour, were there any earthquakes within 100 km of Dallas, Texas?",
+      "expected_answer": "The answer's yes or no conclusion agrees with an independent replay using the selected time and Dallas-radius filters.",
+      "expected_skills": ["lytir_data"],
+      "expected_outcomes": ["answered"],
+      "retrieval": "required",
+      "answer_term_groups": [["dallas"]],
+      "semantic_check": "retrieval_presence"
+    },
+    {
+      "id": "magnitude-last-three-hours",
+      "question": "List earthquakes of magnitude 2 or greater worldwide in the last 3 hours.",
+      "expected_answer": "The answer is based on a query with a minimum magnitude of 2, and every independently retrieved event satisfies that threshold.",
+      "expected_skills": ["lytir_data"],
+      "expected_outcomes": ["answered"],
+      "retrieval": "required",
+      "answer_term_groups": [["magnitude", "M2", "M 2"]],
+      "semantic_check": "magnitude_floor",
+      "semantic_value": 2.0
+    },
+    {
+      "id": "strongest-recent",
+      "question": "What was the strongest earthquake Lytir observed in the last 6 hours, and where was it?",
+      "expected_answer": "The answer gives the maximum magnitude and corresponding place found by independently replaying the selected query.",
+      "expected_skills": ["lytir_data"],
+      "expected_outcomes": ["answered"],
+      "retrieval": "required",
+      "answer_term_groups": [],
+      "semantic_check": "strongest_event"
+    },
+    {
+      "id": "ambiguous-springfield",
+      "question": "Have there been any earthquakes near Springfield in the last hour?",
+      "expected_answer": "The response asks which Springfield the caller means instead of choosing a location silently.",
+      "expected_skills": ["lytir_data"],
+      "expected_outcomes": ["clarification_required"],
+      "retrieval": "none",
+      "answer_term_groups": [
+        ["springfield"],
+        ["which", "state", "country", "clarify"]
+      ],
+      "semantic_check": "none"
+    },
+    {
+      "id": "outside-data-availability",
+      "question": "Were there earthquakes in California in 2000?",
+      "expected_answer": "The response clearly says that the requested period is outside Lytir's available data rather than inventing a result.",
+      "expected_skills": ["lytir_data"],
+      "expected_outcomes": ["answered"],
+      "expected_fields": {
+        "data_status": "outside_available_range",
+        "knowledge_source": "model_knowledge"
+      },
+      "retrieval": "none",
+      "answer_term_groups": [
+        ["2000"],
+        ["cannot verify", "unavailable", "not available", "outside", "does not have", "doesn't have", "available from", "availability begins", "data begins"]
+      ],
+      "semantic_check": "none"
+    },
+    {
+      "id": "default-recent-window",
+      "question": "Have there been earthquakes recently?",
+      "expected_answer": "The answer's conclusion agrees with an independent replay of Lytir's default recent-data window.",
+      "expected_skills": ["lytir_data"],
+      "expected_outcomes": ["answered"],
+      "retrieval": "required",
+      "answer_term_groups": [["earthquake"]],
+      "semantic_check": "retrieval_presence"
+    }
+  ]
+}

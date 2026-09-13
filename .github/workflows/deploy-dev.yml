@@ -1,0 +1,72 @@
+name: DEV -Deploy development Function App
+
+on:
+  pull_request:
+    branches:
+      - dev
+    types:
+      - closed
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-development-function-app
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to development
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      AZURE_FUNCTIONAPP_NAME: ${{ vars.AZURE_FUNCTIONAPP_NAME }}
+      AZURE_FUNCTIONAPP_SKU: ${{ vars.AZURE_FUNCTIONAPP_SKU }}
+
+    steps:
+      - name: Check out the merged dev branch
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Validate deployment inputs
+        env:
+          AZURE_FUNCTIONAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+        run: |
+          if [ -z "$AZURE_FUNCTIONAPP_NAME" ]; then
+            echo "The dev environment variable AZURE_FUNCTIONAPP_NAME is not configured."
+            exit 1
+          fi
+
+          if [ -z "$AZURE_FUNCTIONAPP_PUBLISH_PROFILE" ]; then
+            echo "The dev environment secret AZURE_FUNCTIONAPP_PUBLISH_PROFILE is not configured."
+            exit 1
+          fi
+
+          if [ ! -f host.json ]; then
+            echo "host.json was not found at the repository root."
+            exit 1
+          fi
+
+      - name: Deploy Azure Function App
+        if: env.AZURE_FUNCTIONAPP_SKU != 'flexconsumption'
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: .
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          respect-funcignore: true
+          scm-do-build-during-deployment: true
+          enable-oryx-build: true
+
+      - name: Deploy Flex Consumption Function App
+        if: env.AZURE_FUNCTIONAPP_SKU == 'flexconsumption'
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: .
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          respect-funcignore: true
+          sku: flexconsumption
+          remote-build: true

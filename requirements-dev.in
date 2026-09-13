@@ -1,0 +1,8 @@
+-r requirements.in
+
+# Local development and CI tooling.
+mypy>=1.18,<2
+pip-tools>=7.5,<8
+pytest>=8.4,<10
+ruff>=0.13,<1
+types-requests>=2.33,<3

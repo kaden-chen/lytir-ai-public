@@ -1,0 +1,4 @@
+interface:
+  display_name: "Validate AI Q&A"
+  short_description: "Run semantic and retrieval-grounded Q&A checks"
+  default_prompt: "Use $validate-ai-qa to validate a local or deployed Lytir Q&A API and produce a timestamped report."

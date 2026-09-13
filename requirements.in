@@ -1,0 +1,12 @@
+# Direct runtime dependencies. Compile this file to requirements.txt.
+# Do not include azure-functions-worker; Azure manages the worker version.
+azure-cosmos>=4.9,<5
+azure-functions>=1.24,<2
+azure-identity>=1.25,<2
+azure-iot-device>=2.14,<3
+cachecontrol>=0.14,<1
+google-auth>=2.49,<3
+openai>=2.37,<3
+pydantic>=2.12,<3
+pydantic-ai-slim>=1.100,<2
+requests>=2.34,<3

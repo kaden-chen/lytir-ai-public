@@ -1,0 +1,56 @@
+# Project-specific deployment exclusions
+# Added 2026-09-10. Preserve these entries when regenerating this file with
+# VS Code or Azure Functions tooling. Record future additions or removals here
+# with their date and reason.
+
+# Added 2026-09-10: source control and repository automation are not runtime files.
+.git*
+.github/
+.agents/
+AGENTS.md
+
+# Added 2026-09-10: documentation and licensing are not runtime files.
+README.md
+LICENSE
+docs/
+
+# Added 2026-09-10: local development configuration must not be deployed.
+.vscode/
+.idea/
+.venv/
+venv/
+.env
+.env.*
+local.settings.json
+local.settings.example.json
+
+# Added 2026-09-10: quality-tool configuration and development dependencies
+# are used by contributors and CI, not by the Function App runtime.
+.editorconfig
+.python-version
+pyproject.toml
+requirements.in
+requirements-dev.in
+requirements-dev.txt
+
+# Added 2026-09-10: tests, caches, and generated files are not runtime source.
+test/
+tests/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage*
+htmlcov/
+.python_packages/
+
+# Added 2026-09-10: local Azure and Azurite state must not be deployed.
+.azure/
+.azurite/
+__blobstorage__/
+__queuestorage__/
+__azurite_db*__.json
+
+# Added 2026-09-10: temporary working directories are not deployable content.
+tmp/
+handoff/

@@ -1,0 +1,26 @@
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["B", "E4", "E7", "E9", "F", "I", "SIM", "UP"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+files = [
+    "blueprints",
+    "config",
+    "function_app.py",
+    "models",
+    "pipelines",
+    "services",
+    "tests",
+    "utils",
+    ".agents/skills/validate-ai-qa/scripts/validate_ai_qa.py",
+    ".agents/skills/sync-local-settings-example/scripts/sync_local_settings_example.py",
+]
